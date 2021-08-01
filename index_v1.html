@@ -12,12 +12,6 @@
   <!-- Load jQuery and PapaParse to read data from a CSV file -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
-  <!-- Load marketcluster -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.0/MarkerCluster.Default.min.css" />
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
-
 
   <!-- Position the map with Cascading Style Sheet (CSS) -->
   <style>
@@ -26,7 +20,6 @@
   </style>
 
 </head>
-
 <body>
 
   <!-- Insert HTML division tag to layout the map -->
@@ -43,14 +36,23 @@
     tap: false
   });
 
+  /* Control panel to display map layers */
+  var controlLayers = L.control.layers( null, null, {
+    position: "topright",
+    collapsed: false
+  }).addTo(map);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  // display Carto basemap tiles with light features and labels
+  var light = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
+  }).addTo(map); // EDIT - insert or remove ".addTo(map)" before last semicolon to display by default
+  controlLayers.addBaseLayer(light, 'Carto Light basemap');
 
-var markers = L.markerClusterGroup();
-
-
-
-
+  /* Stamen colored terrain basemap tiles with labels */
+  var terrain = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png', {
+    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
+  }); // EDIT - insert or remove ".addTo(map)" before last semicolon to display by default
+  controlLayers.addBaseLayer(terrain, 'Stamen Terrain basemap');
 
   // see more basemap options at https://leaflet-extras.github.io/leaflet-providers/preview/
 
@@ -69,10 +71,8 @@ var markers = L.markerClusterGroup();
         opacity: 1
       }).bindPopup(row.Title);
       
-      // marker.addTo(map);
-      markers.addLayer(marker)
+      marker.addTo(map);
     }
-    map.addLayer(markers);
 
   });
 
